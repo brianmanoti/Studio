@@ -8,15 +8,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Settings, ChevronDown, CirclePlus, BriefcaseBusiness } from "lucide-react"
-import { ProjectsForm } from "./Projects/projects-Form"
 import { Link } from "react-router-dom"
+import ProjectForm from "@/components/Projects/projects-Form" // ✅ import your reusable form
 
 const Header = () => {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="w-full h-16  flex items-center justify-between px-4 shadow-sm">
+    <header className="w-full h-16 flex items-center justify-between px-4 shadow-sm">
       {/* Left Section: Logo + Nav */}
       <div className="flex items-center space-x-6">
         {/* Logo */}
@@ -30,10 +37,10 @@ const Header = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-66 absolute top-2.5 rounded-t-none font-semibold">
-          <DropdownMenuItem className="flex justify-center text-black font-bold ">
-            <BriefcaseBusiness className="mr-2 h-4 w-4" /> 
-            View all projects
-          </DropdownMenuItem>
+            <DropdownMenuItem className="flex justify-center text-black font-bold">
+              <BriefcaseBusiness className="mr-2 h-4 w-4" /> 
+              View all projects
+            </DropdownMenuItem>
 
             <DropdownMenuSeparator />
             <DropdownMenuItem><Link to={"/projects"}>Project 1</Link></DropdownMenuItem>
@@ -41,15 +48,15 @@ const Header = () => {
             <DropdownMenuSeparator />
 
             {/* Create Project Button */}
-          <DropdownMenuItem className="w-full text-blue-700  focus:text-white  focus:bg-blue-400" asChild>
-            <button
-              onClick={() => setOpen(true)}
-              className="flex w-full items-center gap-2 border-none bg-transparent outline-none"
-            >
-              <CirclePlus className="h-4 w-4 text-blue focus:text-white " />
-              <span>Create New Project</span>
-            </button>
-          </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <button
+                onClick={() => setOpen(true)}
+                className="flex w-full items-center gap-2 border-none bg-transparent outline-none text-blue-700 hover:text-white hover:bg-blue-400 px-2 py-1 rounded"
+              >
+                <CirclePlus className="h-4 w-4" />
+                <span>Create New Project</span>
+              </button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -77,8 +84,17 @@ const Header = () => {
         </Button>
       </div>
 
-      {/* Projects Form Modal */}
-      <ProjectsForm open={open} setOpen={setOpen} />
+      {/* ✅ Projects Form Modal */}
+      <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Create Project</DialogTitle>
+          {/* optional */}
+          <DialogDescription>Fill in details to create a new project</DialogDescription>
+        </DialogHeader>
+        <ProjectForm />
+      </DialogContent>
+      </Dialog>
     </header>
   )
 }
