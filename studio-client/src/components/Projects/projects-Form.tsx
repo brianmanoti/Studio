@@ -74,7 +74,7 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-3 bg-white rounded-lg shadow-md">
+    <div className="max-w-2xl mx-auto p-2 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-blue-700 mb-6">Create New Project</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -120,7 +120,7 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
           />
 
           {/* Address & Value side by side */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               control={form.control}
               name="address"
@@ -151,7 +151,7 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               control={form.control}
               name="startDate"
@@ -159,7 +159,7 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
                 <FormItem>
                   <FormLabel className="text-blue-700">Start Date</FormLabel>
                   <FormControl>
-                    <Input type="date" className="border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
+                    <Input type="date" className=" p-1.5 border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -173,7 +173,7 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
                 <FormItem>
                   <FormLabel className="text-blue-700">End Date</FormLabel>
                   <FormControl>
-                    <Input type="date" className="border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
+                    <Input type="date" className="p-1.5 border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

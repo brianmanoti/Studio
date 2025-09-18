@@ -86,7 +86,7 @@ const Header = () => {
 
       {/* ✅ Projects Form Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent aria-describedby={undefined}>
+      <DialogContent aria-describedby={undefined} className="p-2">
         <DialogHeader>
           <DialogTitle>Create Project</DialogTitle>
           {/* optional */}

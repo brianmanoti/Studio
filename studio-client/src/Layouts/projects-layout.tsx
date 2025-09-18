@@ -16,8 +16,8 @@ const ProjectLayout = () => {
         </nav>
       </aside>
 
-      {/* Dashboard Content */}
-      <div className="flex-1 p-6">
+      {/* Project Content */}
+      <div className="flex-1 p-4">
         <Outlet />
       </div>
     </div>
