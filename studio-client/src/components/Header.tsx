@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Settings, ChevronDown, CirclePlus, BriefcaseBusiness } from "lucide-react"
 import { ProjectsForm } from "./Projects/projects-Form"
+import { Link } from "react-router-dom"
 
 const Header = () => {
   const [open, setOpen] = useState(false)
@@ -35,7 +36,7 @@ const Header = () => {
           </DropdownMenuItem>
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Project 1</DropdownMenuItem>
+            <DropdownMenuItem><Link to={"/projects"}>Project 1</Link></DropdownMenuItem>
             <DropdownMenuItem>Project 2</DropdownMenuItem>
             <DropdownMenuSeparator />
 

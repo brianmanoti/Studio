@@ -1,12 +1,27 @@
-import Header from "./components/Header";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import MainLayout from "./Layouts/main-layout";
+import Home from "./Pages/Home";
+import ProjectLayout from "./Layouts/projects-layout";
+import PurchaseOrders from "./Pages/Purchase-orders";
 
 function App() {
 
 
   return (
-  <>
-  <Header />
-  </>
+  <BrowserRouter>
+    <Routes>
+      {/* Public Pages with Main Layout */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+      </Route>
+
+        {/* Dashboard Pages with Dashboard Layout */}
+        <Route path="/projects" element={<ProjectLayout />}>
+          <Route index element={<PurchaseOrders />} />
+
+        </Route>
+    </Routes>
+  </BrowserRouter>
   );
 }
 
