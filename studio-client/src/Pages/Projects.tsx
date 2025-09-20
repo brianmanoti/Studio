@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search } from "lucide-react"
 import { Link } from "react-router-dom"
+import { toast } from "react-toastify"
 
 const ProjectList = () => {
   const [projects] = useState([
@@ -27,6 +28,8 @@ const ProjectList = () => {
     },
   ])
 
+  const notify = () => toast("Project created")
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -34,6 +37,9 @@ const ProjectList = () => {
         <h2 className="text-2xl font-bold tracking-tight">Active Projects</h2>
         <div className="flex items-center gap-3">
 
+          <Button onClick={notify}>
+            Notify
+          </Button>
           <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
             <Link to={"./projects/new"}>
             + Create Project
