@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Settings, ChevronDown, CirclePlus, BriefcaseBusiness } from "lucide-react"
+import { Settings, ChevronDown, CirclePlus, BriefcaseBusiness, LogOutIcon, User } from "lucide-react"
 import ProjectForm from "@/components/Projects/projects-Form"
 
 const Header = () => {
@@ -108,6 +108,38 @@ const Header = () => {
         <Button variant="ghost" size="icon">
           <Settings className="h-5 w-5" />
         </Button>
+
+        
+      {/* User Profile Dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="/images/user-avatar.png" alt="User profile" />
+              <AvatarFallback className="bg-blue-600 text-white">
+                JD
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuLabel className="font-medium">My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <User className="mr-2 h-4 w-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="text-red-600">
+            <LogOutIcon className="mr-2 h-4 w-4" />
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       </div>
 
       {/* Project Form Modal */}
