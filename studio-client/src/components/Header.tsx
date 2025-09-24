@@ -1,5 +1,7 @@
 import { useState } from "react"
+import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,18 +18,29 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Settings, ChevronDown, CirclePlus, BriefcaseBusiness } from "lucide-react"
-import { Link } from "react-router-dom"
-import ProjectForm from "@/components/Projects/projects-Form" // ✅ import your reusable form
+import ProjectForm from "@/components/Projects/projects-Form"
 
 const Header = () => {
   const [open, setOpen] = useState(false)
+  const location = useLocation()
+  const logo = "/images/logo-full.png", companyName = "Studio 1-1" 
 
   return (
-    <header className="w-full h-16 flex items-center justify-between px-4 shadow-sm">
+    <header className="w-full h-16 flex items-center justify-between px-4 shadow-sm bg-white">
       {/* Left Section: Logo + Nav */}
       <div className="flex items-center space-x-6">
         {/* Logo */}
-        <div className="text-lg font-semibold">Logo</div>
+
+        <Link to="/" className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={logo} alt={`Logo`} />
+            <AvatarFallback className="bg-blue-600 text-white font-bold">
+              {companyName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-lg font-bold text-blue-600">{companyName}</span>
+        </Link>
+
 
         {/* Projects Dropdown */}
         <DropdownMenu>
@@ -36,26 +49,35 @@ const Header = () => {
               Projects <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-66 absolute top-2.5 rounded-t-none font-semibold">
-            <DropdownMenuItem className="flex justify-center text-black font-bold">
-              <BriefcaseBusiness className="mr-2 h-4 w-4" /> 
-              View all projects
+          <DropdownMenuContent align="start" className="w-64 font-semibold">
+            <DropdownMenuItem className="flex items-center justify-center text-black font-bold">
+              <BriefcaseBusiness className="mr-2 h-4 w-4" /> View all projects
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem><Link to={"/projects"}>Project 1</Link></DropdownMenuItem>
-            <DropdownMenuItem>Project 2</DropdownMenuItem>
+
+            <DropdownMenuItem>
+              <Link
+                to="/projects/1"
+                className={location.pathname === "/projects/1" ? "text-blue-600 font-bold" : ""}
+              >
+                Project 1
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
+                to="/projects/2"
+                className={location.pathname === "/projects/2" ? "text-blue-600 font-bold" : ""}
+              >
+                Project 2
+              </Link>
+            </DropdownMenuItem>
+
             <DropdownMenuSeparator />
 
             {/* Create Project Button */}
-            <DropdownMenuItem asChild>
-              <button
-                onClick={() => setOpen(true)}
-                className="flex w-full items-center gap-2 border-none bg-transparent outline-none text-blue-700 hover:text-white hover:bg-blue-400 px-2 py-1 rounded"
-              >
-                <CirclePlus className="h-4 w-4" />
-                <span>Create New Project</span>
-              </button>
+            <DropdownMenuItem onClick={() => setOpen(true)} className="text-blue-700">
+              <CirclePlus className="h-4 w-4 mr-2" /> Create New Project
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -70,9 +92,13 @@ const Header = () => {
           <DropdownMenuContent>
             <DropdownMenuLabel>All Items</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Item One</DropdownMenuItem>
-            <DropdownMenuItem>Item Two</DropdownMenuItem>
-            <DropdownMenuItem>Item Three</DropdownMenuItem>
+            <DropdownMenuItem>Estimates</DropdownMenuItem>
+            <DropdownMenuItem>Purchase Orders </DropdownMenuItem>
+            <DropdownMenuItem>Wages</DropdownMenuItem>
+            <DropdownMenuItem>Expenses</DropdownMenuItem>
+            <DropdownMenuItem>Subcontactors</DropdownMenuItem>
+            <DropdownMenuItem>Estimates</DropdownMenuItem>
+            <DropdownMenuItem>Payroll</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -84,16 +110,17 @@ const Header = () => {
         </Button>
       </div>
 
-      {/* ✅ Projects Form Modal */}
+      {/* Project Form Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent aria-describedby={undefined} className="p-2">
-        <DialogHeader>
-          <DialogTitle>Create Project</DialogTitle>
-          {/* optional */}
-          <DialogDescription>Fill in details to create a new project</DialogDescription>
-        </DialogHeader>
-        <ProjectForm />
-      </DialogContent>
+        <DialogContent aria-describedby={undefined} className="p-2">
+          <DialogHeader>
+            <DialogTitle>Create Project</DialogTitle>
+            <DialogDescription>
+              Fill in details to create a new project
+            </DialogDescription>
+          </DialogHeader>
+          <ProjectForm />
+        </DialogContent>
       </Dialog>
     </header>
   )

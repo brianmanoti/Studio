@@ -9,6 +9,8 @@ import {
   PieChart,
   ChevronLeft,
   ChevronRight,
+  ListOrderedIcon,
+  TrendingUpDownIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -20,8 +22,9 @@ import {
 
 const navItems = [
   { name: "Projects", icon: Briefcase, to: "/projects" },
+  { name: "Estimates", icon: TrendingUpDownIcon, to: "/projects/estimates" },
   { name: "Expenses", icon: FileText, to: "/projects/expenses" },
-  { name: "Purchase Orders", icon: FileText, to: "/projects/purchase-orders" },
+  { name: "Purchase Orders", icon: ListOrderedIcon, to: "/projects/purchase-orders" },
   { name: "Wages", icon: DollarSign, to: "/projects/wages" },
   { name: "Subcontractors", icon: Users, to: "/projects/subcontractors" },
   { name: "Payroll", icon: CreditCard, to: "/projects/payroll" },
