@@ -8,6 +8,7 @@ import PurchaseOrdersTable from "./Pages/tables/Purchase-orders";
 import WagesTable from "./Pages/tables/Wages-table";
 import ExpenseTable from "./Pages/tables/expense-table";
 import { LoginForm } from "./Pages/Authentication/Login";
+import { EstimatesTable } from "./Pages/tables/estimate-table";
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         {/* Dashboard Pages with Dashboard Layout */}
         <Route path="/projects/:id" element={<ProjectLayout />}>
           <Route index element={<FinancialDashboard />} />
+          <Route path="estimates" element={<EstimatesTable />} />
           <Route path="purchase-orders" element={<PurchaseOrdersTable />} />
           <Route path="wages" element={<WagesTable />} />
           <Route path="expenses" element={<ExpenseTable />} />

@@ -21,14 +21,13 @@ import {
 } from "@/components/ui/tooltip";
 
 const navItems = [
-  { name: "Projects", icon: Briefcase, to: "/projects" },
-  { name: "Estimates", icon: TrendingUpDownIcon, to: "/projects/estimates" },
-  { name: "Expenses", icon: FileText, to: "/projects/expenses" },
-  { name: "Purchase Orders", icon: ListOrderedIcon, to: "/projects/purchase-orders" },
-  { name: "Wages", icon: DollarSign, to: "/projects/wages" },
-  { name: "Subcontractors", icon: Users, to: "/projects/subcontractors" },
-  { name: "Payroll", icon: CreditCard, to: "/projects/payroll" },
-  { name: "Budget", icon: PieChart, to: "/projects/budget" },
+  { name: "Estimates", icon: TrendingUpDownIcon, to: "estimates" },
+  { name: "Expenses", icon: FileText, to: "expenses" },
+  { name: "Purchase Orders", icon: ListOrderedIcon, to: "purchase-orders" },
+  { name: "Wages", icon: DollarSign, to: "wages" },
+  { name: "Subcontractors", icon: Users, to: "subcontractors" },
+  { name: "Payroll", icon: CreditCard, to: "payroll" },
+  { name: "Budget", icon: PieChart, to: "budget" },
 ];
 
 const Sidebar = ({ logo, logoCollapsed, projectName = "My Project" }) => {
