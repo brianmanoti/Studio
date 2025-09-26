@@ -19,11 +19,14 @@ import {
 } from "@/components/ui/dialog"
 import { Settings, ChevronDown, CirclePlus, BriefcaseBusiness, LogOutIcon, User } from "lucide-react"
 import ProjectForm from "@/components/Projects/projects-Form"
+import { useProjects } from "@/lib/hooks/useProjects"
 
 const Header = () => {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   const logo = "/images/logo-full.png", companyName = "Studio 1-1" 
+  const { data: projects, isLoading, isError } = useProjects()
+  
 
   return (
     <header className="w-full h-16 flex items-center justify-between px-4 shadow-sm bg-white">
@@ -41,7 +44,6 @@ const Header = () => {
           <span className="text-lg font-bold text-blue-600">{companyName}</span>
         </Link>
 
-
         {/* Projects Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -56,27 +58,42 @@ const Header = () => {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
-              <Link
-                to="/projects/1"
-                className={location.pathname === "/projects/1" ? "text-blue-600 font-bold" : ""}
-              >
-                Project 1
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link
-                to="/projects/2"
-                className={location.pathname === "/projects/2" ? "text-blue-600 font-bold" : ""}
-              >
-                Project 2
-              </Link>
-            </DropdownMenuItem>
+            {/* Handle states */}
+            {isLoading && (
+              <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
+            )}
+            {isError && (
+              <DropdownMenuItem className="text-red-500">
+                Failed to load projects
+              </DropdownMenuItem>
+            )}
+            {!isLoading && projects?.length === 0 && (
+              <DropdownMenuItem disabled>No projects found</DropdownMenuItem>
+            )}
+
+            {/* Render projects */}
+            {projects?.map((project: any) => (
+              <DropdownMenuItem key={project.id}>
+                <Link
+                  to={`/projects/${project.id}`}
+                  className={
+                    location.pathname === `/projects/${project.id}`
+                      ? "text-blue-600 font-bold"
+                      : ""
+                  }
+                >
+                  {project.name}
+                </Link>
+              </DropdownMenuItem>
+            ))}
 
             <DropdownMenuSeparator />
 
             {/* Create Project Button */}
-            <DropdownMenuItem onClick={() => setOpen(true)} className="text-blue-700">
+            <DropdownMenuItem
+              onClick={() => setOpen(true)}
+              className="text-blue-700"
+            >
               <CirclePlus className="h-4 w-4 mr-2" /> Create New Project
             </DropdownMenuItem>
           </DropdownMenuContent>
