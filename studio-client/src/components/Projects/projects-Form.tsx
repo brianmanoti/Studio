@@ -34,7 +34,7 @@ const projectSchema = z.object({
   name: z.string().min(2, "Project name is required"),
   client: z.string().min(1, "Client is required"),
   location: z.string().min(3, "Location is required"),
-  projectType: z.string().min(3, "Project type is required"),
+  type: z.string().min(3, "Project type is required"),
   startDate: z.string().nonempty("Start date is required"),
   endDate: z.string().nonempty("End date is required"),
   status: z
@@ -72,7 +72,7 @@ export default function ProjectForm({
       name: "",
       client: "",
       location: "",
-      projectType: "",
+      type: "",
       startDate: "",
       endDate: "",
       status: "draft",
@@ -185,7 +185,7 @@ export default function ProjectForm({
             />
             <FormField
               control={form.control}
-              name="projectType"
+              name="type"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Project Type</FormLabel>
