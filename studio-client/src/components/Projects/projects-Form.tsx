@@ -1,4 +1,4 @@
-"use client"
+// components/ProjectForm.tsx
 
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -13,68 +13,93 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useEffect, useState } from "react"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { useState } from "react"
+import { toast } from "react-toastify"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import axiosInstance from "@/lib/axios"
+import { useNavigate } from "react-router-dom"
+import { useClients } from "@/lib/hooks/useClients"
 
-// Zod schema aligned with Mongoose
+// ✅ Schema
 const projectSchema = z.object({
   name: z.string().min(2, "Project name is required"),
-  client: z.string().min(1, "Client is required"), // ObjectId as string
-  address: z.string().min(5, "Address is required"),
-  status: z.enum(["Pending", "In Progress", "Completed", "On Hold", "Cancelled", "draft"]).optional(),
-  value: z.string().min(1, "Project value is required"),
+  client: z.string().min(1, "Client is required"),
+  location: z.string().min(3, "Location is required"),
+  projectType: z.string().min(3, "Project type is required"),
   startDate: z.string().nonempty("Start date is required"),
   endDate: z.string().nonempty("End date is required"),
+  status: z
+    .enum(["Pending", "In Progress", "Completed", "On Hold", "Cancelled", "draft"])
+    .optional(),
+}).refine((data) => new Date(data.endDate) >= new Date(data.startDate), {
+  message: "End date must be after start date",
+  path: ["endDate"],
 })
 
 type ProjectFormValues = z.infer<typeof projectSchema>
 
 interface ProjectFormProps {
   onSuccess?: () => void
+  onClientSelected?: (id: string) => void
+  redirectOnSuccess?: boolean
 }
 
-const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
-  const [clients, setClients] = useState<{ _id: string; name: string }[]>([])
+export default function ProjectForm({
+  onSuccess,
+  onClientSelected,
+  redirectOnSuccess,
+}: ProjectFormProps) {
+  const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  // ✅ Clients hook now gives { status, data }
+  const { data: clientsResponse, isLoading } = useClients()
+  const clients = clientsResponse?.data ?? [] // safe fallback
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       name: "",
       client: "",
-      address: "",
-      status: "draft",
-      value: "",
+      location: "",
+      projectType: "",
       startDate: "",
       endDate: "",
+      status: "draft",
     },
   })
 
-  // Fetch clients for dropdown
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const res = await axiosInstance.get("/api/clients")
-        setClients(res.data)
-      } catch (error) {
-        console.error("Failed to load clients", error)
-      }
-    }
-    fetchClients()
-  }, [])
-
-  const onSubmit = async (data: ProjectFormValues) => {
-    try {
-      await axiosInstance.post("/api/projects", data)
+  // ✅ Create Project mutation
+  const createProject = useMutation({
+    mutationFn: (data: ProjectFormValues) => axiosInstance.post("/api/projects", data),
+    onSuccess: () => {
+      toast.success("✅ Project created successfully!")
+      queryClient.invalidateQueries({ queryKey: ["projects"] })
       form.reset()
       if (onSuccess) onSuccess()
-    } catch (error) {
-      console.error("Error creating project:", error)
-    }
+      if (redirectOnSuccess) navigate("/projects")
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "❌ Error creating project")
+    },
+  })
+
+  const onSubmit = (data: ProjectFormValues) => {
+    createProject.mutate(data)
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-2 bg-white rounded-lg shadow-md">
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-blue-700 mb-6">Create New Project</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -84,65 +109,88 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-blue-700">Project Name</FormLabel>
+                <FormLabel>Project Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter project name" className="border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
+                  <Input placeholder="Enter project name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Client */}
-          <FormField
-            control={form.control}
-            name="client"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-blue-700">Client</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="border-blue-300 focus:border-blue-500 focus:ring-blue-500">
-                      <SelectValue placeholder="Select client" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {clients.map((c) => (
-                      <SelectItem key={c._id} value={c._id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Client with search */}
+        <FormField
+          control={form.control}
+          name="client"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Client</FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" className="w-full justify-between">
+                    {field.value
+                      ? clients.find((c: any) => c._id === field.value)?.companyName
+                      : "Select client"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Search clients..." />
+                    <CommandList>
+                      <CommandEmpty>
+                        {isLoading ? "Loading..." : "No clients found."}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {clients.map((c: any) => (
+                          <CommandItem
+                            key={c._id}
+                            onSelect={() => {
+                              form.setValue("client", c._id)
+                              if (onClientSelected) onClientSelected(c._id)
+                              setOpen(false)
+                            }}
+                            className="flex flex-col items-start py-2"
+                          >
+                            <span className="font-medium text-blue-700">{c.companyName}</span>
+                            <span className="text-xs text-gray-500">
+                              {c.primaryContact} · {c.email}
+                            </span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          {/* Address & Value side by side */}
-          <div className="grid grid-cols-2 gap-3">
+
+          {/* Location & Value */}
+          <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="address"
+              name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-700">Address</FormLabel>
+                  <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter address" className="border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
+                    <Input placeholder="Project location" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
-              name="value"
+              name="projectType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-700">Project Value</FormLabel>
+                  <FormLabel>Project Type</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter project value" className="border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
+                    <Input placeholder="New home, renovation e.tc" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,29 +199,28 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="startDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-700">Start Date</FormLabel>
+                  <FormLabel>Start Date</FormLabel>
                   <FormControl>
-                    <Input type="date" className=" p-1.5 border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="endDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-700">End Date</FormLabel>
+                  <FormLabel>End Date</FormLabel>
                   <FormControl>
-                    <Input type="date" className="p-1.5 border-blue-300 focus:border-blue-500 focus:ring-blue-500" {...field} />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -187,35 +234,25 @@ const ProjectForm = ({ onSuccess }: ProjectFormProps) => {
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-blue-700">Status</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="border-blue-300 focus:border-blue-500 focus:ring-blue-500">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Pending">Pending</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
-                    <SelectItem value="On Hold">On Hold</SelectItem>
-                    <SelectItem value="Cancelled">Cancelled</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormLabel>Status</FormLabel>
+                <FormControl>
+                  <Input placeholder="Pending / In Progress / Completed..." {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
           {/* Submit */}
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-            Create Project
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            disabled={createProject.isPending}
+          >
+            {createProject.isPending ? "Creating..." : "Create Project"}
           </Button>
         </form>
       </Form>
     </div>
   )
 }
-
-export default ProjectForm

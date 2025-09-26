@@ -105,15 +105,17 @@ const ProjectList = () => {
                 </div>
             </td>
 
-            {/* Client */}
-            <td className="p-4">
-                <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold">
-                    {project.client?.charAt(0).toUpperCase()}
-                </span>
-                <span className="text-gray-700">{project.client}</span>
-                </div>
-            </td>
+          {/* Client */}
+          <td className="p-4">
+            <div className="flex items-center gap-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold">
+                {project.client?.primaryContact?.charAt(0).toUpperCase() || "?"}
+              </span>
+              <span className="text-gray-700">
+                {project.client?.companyName || "Unknown Client"}
+              </span>
+            </div>
+          </td>
 
             {/* Project Type */}
             <td className="p-4 text-gray-600">{project.type}</td>
