@@ -7,28 +7,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search } from "lucide-react"
 import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
+import { useProjects } from "@/lib/hooks/useProjects"
 
 const ProjectList = () => {
-  const [projects] = useState([
-    {
-      id: "PR-002",
-      name: "Admin Panel Redesign",
-      client: "Edwin",
-      type: "New Home",
-      startDate: "—",
-      endDate: "—",
-    },
-    {
-      id: "PR-001",
-      name: "Demo Project",
-      client: "Edwin",
-      type: "Renovation",
-      startDate: "17/09/2025",
-      endDate: "15/04/2026",
-    },
-  ])
 
   const notify = () => toast("Project created")
+    const { data: projects, isLoading, isError } = useProjects()
+
+  if (isLoading) return <p>Loading...</p>
+  if (isError) return <p>Failed to load projects</p>
+
+    if (!projects || projects.length === 0) {
+    return <p className="text-gray-500">No projects found. Start by creating one!</p>
+  }
 
   return (
     <div className="p-6 space-y-6">
