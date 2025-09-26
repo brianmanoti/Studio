@@ -7,6 +7,7 @@ import FinancialDashboard from "./Pages/Dashboard";
 import PurchaseOrdersTable from "./Pages/tables/Purchase-orders";
 import WagesTable from "./Pages/tables/Wages-table";
 import ExpenseTable from "./Pages/tables/expense-table";
+import { LoginForm } from "./Pages/Authentication/Login";
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
       {/* Public Pages with Main Layout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginForm />} />
         <Route path="/projects/new" element={<ProjectForm />} />
       </Route>
 

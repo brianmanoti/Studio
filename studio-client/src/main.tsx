@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify'
 
 //import dev tools for debugging
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { AuthProvider } from './lib/context/context.tsx'
 
 // create a client instance
 const queryClient = new QueryClient()
@@ -18,15 +19,18 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
+
       <App />
-      <ReactQueryDevtools initialIsOpen={false} />
-        <ToastContainer 
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <AuthProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+          <ToastContainer 
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
 )
