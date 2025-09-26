@@ -23,7 +23,7 @@ function App() {
       </Route>
 
         {/* Dashboard Pages with Dashboard Layout */}
-        <Route path="/projects" element={<ProjectLayout />}>
+        <Route path="/projects/:id" element={<ProjectLayout />}>
           <Route index element={<FinancialDashboard />} />
           <Route path="purchase-orders" element={<PurchaseOrdersTable />} />
           <Route path="wages" element={<WagesTable />} />

@@ -4,19 +4,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { useProjects } from "@/lib/hooks/useProjects"
 
 const ProjectList = () => {
-
   const notify = () => toast("Project created")
-    const { data: projects, isLoading, isError } = useProjects()
+  const { data: projects, isLoading, isError } = useProjects()
+  const navigate = useNavigate()
 
   if (isLoading) return <p>Loading...</p>
   if (isError) return <p>Failed to load projects</p>
 
-    if (!projects || projects.length === 0) {
+  if (!projects || projects.length === 0) {
     return <p className="text-gray-500">No projects found. Start by creating one!</p>
   }
 
@@ -26,14 +26,9 @@ const ProjectList = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight">Active Projects</h2>
         <div className="flex items-center gap-3">
-
-          <Button onClick={notify}>
-            Notify
-          </Button>
+          <Button onClick={notify}>Notify</Button>
           <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white shadow-md">
-            <Link to={"./projects/new"}>
-            + Create Project
-            </Link>
+            <Link to={"./projects/new"}>+ Create Project</Link>
           </Button>
         </div>
       </div>
@@ -82,53 +77,59 @@ const ProjectList = () => {
               <th className="p-4">End Date</th>
             </tr>
           </thead>
-        <tbody className="divide-y divide-gray-200">
-        {projects.map((project, i) => (
-            <tr
-            key={i}
-            className="hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-            {/* ID */}
-            <td className="p-4 font-medium text-blue-600">
-                {project.id}
-            </td>
+          <tbody className="divide-y divide-gray-200">
+            {projects.map((project) => (
+              <tr
+                key={project._id}
+                onClick={() => navigate(`/projects/${project._id}`)} // 👈 redirect
+                className="hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                {/* ID */}
+                <td className="p-4 font-medium text-blue-600">
+                  {project.projectNumber || "N/A"}
+                </td>
 
-            {/* Project Name */}
-            <td className="p-4">
-                <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gray-200 text-xs font-semibold">
-                    {project.name?.charAt(0).toUpperCase()}
-                </span>
-                <span className="text-blue-700 font-medium hover:underline">
-                    {project.name}
-                </span>
-                </div>
-            </td>
+                {/* Project Name */}
+                <td className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gray-200 text-xs font-semibold">
+                      {project.name?.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="text-blue-700 font-medium hover:underline">
+                      {project.name}
+                    </span>
+                  </div>
+                </td>
 
-          {/* Client */}
-          <td className="p-4">
-            <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold">
-                {project.client?.primaryContact?.charAt(0).toUpperCase() || "?"}
-              </span>
-              <span className="text-gray-700">
-                {project.client?.companyName || "Unknown Client"}
-              </span>
-            </div>
-          </td>
+                {/* Client */}
+                <td className="p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold">
+                      {project.client?.primaryContact?.charAt(0).toUpperCase() || "?"}
+                    </span>
+                    <div className="flex flex-col">
+                      <span className="text-gray-700 font-medium">
+                        {project.client?.companyName || "Unknown Client"}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {project.client?.primaryContact || ""}{" "}
+                        {project.client?.email ? `· ${project.client.email}` : ""}
+                      </span>
+                    </div>
+                  </div>
+                </td>
 
-            {/* Project Type */}
-            <td className="p-4 text-gray-600">{project.type}</td>
+                {/* Project Type */}
+                <td className="p-4 text-gray-600">{project.type || "-"}</td>
 
-            {/* Start Date */}
-            <td className="p-4 text-gray-600">{project.startDate}</td>
+                {/* Start Date */}
+                <td className="p-4 text-gray-600">{project.startDate}</td>
 
-            {/* End Date */}
-            <td className="p-4 text-gray-600">{project.endDate}</td>
-            </tr>
-        ))}
-        </tbody>
-
+                {/* End Date */}
+                <td className="p-4 text-gray-600">{project.endDate}</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
 
